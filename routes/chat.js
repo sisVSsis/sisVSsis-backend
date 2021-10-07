@@ -1,37 +1,13 @@
-const router = require('express').Router();
-let Chat = require('../models/chat.model');
+const express = require('express');
 
-router.route('/').get((req, res) => {
-  Chat.find()
-    .then((chat) => res.json(chat))
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
+const { getPosts, createPost, updatePost, deletePost } = require('../controllers/chat');
 
-router.route('/add').post((req, res) => {
-  const name = req.body.name;
-  const chat = req.body.chat;
+const router = express.Router();
+const auth = require('../middleware/auth.js');
 
-  const newChat = new Chat({
-    name,
-    chat,
-  });
+router.get('/', getPosts);
+router.post('/',auth,  createPost);
+router.patch('/:id', auth, updatePost);
+router.delete('/:id', auth, deletePost);
 
-  newChat
-    .save()
-    .then(() => res.json('Chat added!'))
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
-
-router.route('/:id').get((req, res) => {
-  Chat.findById(req.params.id)
-    .then((chat) => res.json(chat))
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
-
-router.route('/:id').delete((req, res) => {
-  Chat.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Chat deleted.'))
-    .catch((err) => res.status(400).json('Error: ' + err));
-});
-
-module.exports = router;
+module.exports = router

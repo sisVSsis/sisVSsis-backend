@@ -6,6 +6,7 @@ const chatSchema = new Schema(
   {
     name: { type: String, required: false },
     chat: { type: String, required: false },
+    creator: String,
   },
   {
     timestamps: true,
